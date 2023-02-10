@@ -2,6 +2,7 @@ using GraphiQl;
 using GraphQL.Server;
 using GraphQL.Types;
 using GraphQlProject.Interfaces;
+using GraphQlProject.Mutations;
 using GraphQlProject.Query;
 using GraphQlProject.Schema;
 using GraphQlProject.Services;
@@ -17,6 +18,7 @@ builder.Services.AddTransient<IProduct, ProductService>();
 // Register GraphQL type, query and schema
 builder.Services.AddSingleton<ProductType>();
 builder.Services.AddSingleton<ProductQuery>();
+builder.Services.AddSingleton<ProductMutation>();
 builder.Services.AddSingleton<ISchema, ProductSchema>();
 builder.Services.AddGraphQL(x => x.EnableMetrics = false).AddSystemTextJson();
 
