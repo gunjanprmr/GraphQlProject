@@ -10,7 +10,14 @@ public class UserService : IUser
         return new User
         {
             id = "123",
-            isActive = true
+            isActive = true,
+            contact = new Contact
+            {
+                firstName = "john",
+                lastName = "doe",
+                email = "test@test.com",
+                phoneNumber = "1234567890"
+            }
         };
     }
 }

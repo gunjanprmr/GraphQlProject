@@ -20,6 +20,7 @@ builder.Services.AddTransient<IUser, UserService>();
 // Register GraphQL type, query and schema
 // builder.Services.AddSingleton<ProductType>();
 builder.Services.AddSingleton<UserType>();
+builder.Services.AddSingleton<ContactType>();
 
 // builder.Services.AddSingleton<ProductQuery>();
 builder.Services.AddSingleton<UserQuery>();

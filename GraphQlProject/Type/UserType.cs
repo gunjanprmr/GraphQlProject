@@ -9,5 +9,10 @@ public class UserType : ObjectGraphType<User>
     {
         Field(x => x.id);
         Field(x => x.isActive);
+        Field(
+            name: "contact",
+            type: typeof(ContactType),
+            resolve: context => context.Source.contact
+        );
     }
 }
