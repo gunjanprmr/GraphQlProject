@@ -7,12 +7,16 @@ using GraphQlProject.Query;
 using GraphQlProject.Schema;
 using GraphQlProject.Services;
 using GraphQlProject.Type;
+using Microsoft.Azure.Cosmos;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+// Add Cosmos
+builder.Services.AddSingleton(_ => new CosmosClient(""));
 
 // builder.Services.AddTransient<IProduct, ProductService>();
 builder.Services.AddTransient<IUser, UserService>();
