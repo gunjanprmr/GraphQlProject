@@ -16,7 +16,7 @@ public class UserService : IUser
         _config = config;
     }
 
-    public async Task<User> GetUserById(string id)
+    public async Task<User> GetUserById(string id, string userId)
     {
         try
         {
@@ -24,7 +24,7 @@ public class UserService : IUser
             var containerName = _config.GetValue<string>("Cosmos:UserContainer");
 
             var test = await _client.GetContainer(dbname, containerName)
-                .ReadItemStreamAsync(id, new PartitionKey(id));
+                .ReadItemStreamAsync(id, new PartitionKey(userId));
             
             var user = test.IsSuccessStatusCode 
                 ? await JsonSerializer.DeserializeAsync<User>(test.Content) 
