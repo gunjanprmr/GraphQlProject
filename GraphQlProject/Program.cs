@@ -16,7 +16,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 // Add Cosmos
-builder.Services.AddSingleton(_ => new CosmosClient(""));
+builder.Services.AddSingleton(_ => new CosmosClient(builder.Configuration["Cosmos:ConnectionString"]));
+
 
 // builder.Services.AddTransient<IProduct, ProductService>();
 builder.Services.AddTransient<IUser, UserService>();
