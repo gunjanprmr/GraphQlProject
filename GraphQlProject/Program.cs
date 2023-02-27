@@ -31,6 +31,7 @@ builder.Services.AddSingleton<ContactType>();
 builder.Services.AddSingleton<UserQuery>();
 
 // builder.Services.AddSingleton<ProductMutation>();
+builder.Services.AddSingleton<UserMutation>();
 
 // builder.Services.AddSingleton<ISchema, ProductSchema>();
 builder.Services.AddSingleton<ISchema, UserSchema>();

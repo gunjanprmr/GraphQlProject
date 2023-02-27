@@ -10,7 +10,13 @@ public class UserQuery: ObjectGraphType
     public UserQuery(IUser userService)
     {
         Field<UserType>("user", 
-            arguments: new QueryArguments(new QueryArgument<StringGraphType> { Name = "id"}),
-            resolve: _ => userService.GetUserById(_.GetArgument<string>("id")));
+            arguments: new QueryArguments(
+                new QueryArgument<StringGraphType> { Name = "id"}, 
+                new QueryArgument<StringGraphType> { Name = "userId"}
+                ),
+            resolve: _ => userService.GetUserById(
+                _.GetArgument<string>("id"), 
+                _.GetArgument<string>("userId")
+                ));
     }
 }

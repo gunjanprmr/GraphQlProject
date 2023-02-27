@@ -1,6 +1,6 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using GraphQlProject.Interfaces;
-using GraphQlProject.Models;
 using Microsoft.Azure.Cosmos;
 using User = GraphQlProject.Models.User;
 
@@ -16,7 +16,7 @@ public class UserService : IUser
         _config = config;
     }
 
-    public async Task<User> GetUserById(string id)
+    public async Task<User> GetUserById(string id, string userId)
     {
         try
         {
@@ -24,13 +24,46 @@ public class UserService : IUser
             var containerName = _config.GetValue<string>("Cosmos:UserContainer");
 
             var test = await _client.GetContainer(dbname, containerName)
-                .ReadItemStreamAsync(id, new PartitionKey(id));
+                .ReadItemStreamAsync(id, new PartitionKey(userId));
             
             var user = test.IsSuccessStatusCode 
                 ? await JsonSerializer.DeserializeAsync<User>(test.Content) 
                 : default;
 
             return user;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    public async Task<User> AddUser(User user)
+    {
+        try
+        {
+            var dbname = _config.GetValue<string>("Cosmos:DbName");
+            var containerName = _config.GetValue<string>("Cosmos:UserContainer");
+        
+            using var stream = new MemoryStream();
+            // Save to database
+            await JsonSerializer.SerializeAsync(stream, user, options: new JsonSerializerOptions
+            {
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            });
+        
+            var dbResponse = await _client.GetContainer(dbname, containerName)
+                .CreateItemStreamAsync(stream, new PartitionKey(user.userId), new ItemRequestOptions
+                {
+                    EnableContentResponseOnWrite = true
+                });
+            
+            var savedUser = dbResponse.IsSuccessStatusCode 
+                ? await JsonSerializer.DeserializeAsync<User>(dbResponse.Content) 
+                : default;
+
+            return savedUser;
         }
         catch (Exception e)
         {
