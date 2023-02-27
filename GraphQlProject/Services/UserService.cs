@@ -113,24 +113,12 @@ public class UserService : IUser
             var dbname = _config.GetValue<string>("Cosmos:DbName");
             var containerName = _config.GetValue<string>("Cosmos:UserContainer");
         
-            // using var stream = new MemoryStream();
-            // // Save to database
-            // await JsonSerializer.SerializeAsync(stream, userId, options: new JsonSerializerOptions
-            // {
-            //     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-            // });
-        
-            var dbResponse = await _client.GetContainer(dbname, containerName)
+            await _client.GetContainer(dbname, containerName)
                 .DeleteItemStreamAsync(id, new PartitionKey(userId), new ItemRequestOptions
                 {
                     EnableContentResponseOnWrite = true
                 });
             
-           var a = dbResponse.IsSuccessStatusCode 
-                ? await JsonSerializer.DeserializeAsync<User>(dbResponse.Content) 
-                : default;
-
-           
         }
         catch (Exception e)
         {
