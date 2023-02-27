@@ -3,6 +3,7 @@ namespace GraphQlProject.Models;
 public class User
 {
     public string id { get; set; }
+    public string userId { get; set; } = Guid.NewGuid().ToString() ;
     public bool isActive { get; set; }
     public Contact contact { get; set; }
 }

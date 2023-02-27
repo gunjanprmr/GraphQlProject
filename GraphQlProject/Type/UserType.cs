@@ -8,6 +8,7 @@ public class UserType : ObjectGraphType<User>
     public UserType()
     {
         Field(x => x.id);
+        Field(x => x.userId);
         Field(x => x.isActive);
         Field(
             name: "contact",
