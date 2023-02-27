@@ -71,4 +71,71 @@ public class UserService : IUser
             throw;
         }
     }
+
+    public async Task<User> UpdateUser(string userId, User user)
+    {
+        try
+        {
+            var dbname = _config.GetValue<string>("Cosmos:DbName");
+            var containerName = _config.GetValue<string>("Cosmos:UserContainer");
+        
+            using var stream = new MemoryStream();
+            // Save to database
+            user.userId = userId;
+            await JsonSerializer.SerializeAsync(stream, user, options: new JsonSerializerOptions
+            {
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            });
+        
+            var dbResponse = await _client.GetContainer(dbname, containerName)
+                .UpsertItemStreamAsync(stream, new PartitionKey(user.userId), new ItemRequestOptions
+                {
+                    EnableContentResponseOnWrite = true
+                });
+            
+            var updatedUser = dbResponse.IsSuccessStatusCode 
+                ? await JsonSerializer.DeserializeAsync<User>(dbResponse.Content) 
+                : default;
+
+            return updatedUser;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    public async Task DeleteUser(string id, string userId)
+    {
+        try
+        {
+            var dbname = _config.GetValue<string>("Cosmos:DbName");
+            var containerName = _config.GetValue<string>("Cosmos:UserContainer");
+        
+            // using var stream = new MemoryStream();
+            // // Save to database
+            // await JsonSerializer.SerializeAsync(stream, userId, options: new JsonSerializerOptions
+            // {
+            //     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            // });
+        
+            var dbResponse = await _client.GetContainer(dbname, containerName)
+                .DeleteItemStreamAsync(id, new PartitionKey(userId), new ItemRequestOptions
+                {
+                    EnableContentResponseOnWrite = true
+                });
+            
+           var a = dbResponse.IsSuccessStatusCode 
+                ? await JsonSerializer.DeserializeAsync<User>(dbResponse.Content) 
+                : default;
+
+           
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
 }
