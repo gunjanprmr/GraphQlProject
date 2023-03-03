@@ -50,7 +50,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseGraphiQl("/graphql");
+// app.UseGraphiQl("/graphql");
+app.UseGraphQLPlayground("/graphql");
 app.UseGraphQL<ISchema>();
 
 
