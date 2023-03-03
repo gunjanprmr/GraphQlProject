@@ -16,6 +16,37 @@ public class UserService : IUser
         _config = config;
     }
 
+    public async Task<List<User>> GetUsers()
+    {
+        try
+        {
+            var users = new List<User>();
+            var dbname = _config.GetValue<string>("Cosmos:DbName");
+            var containerName = _config.GetValue<string>("Cosmos:UserContainer");
+
+            using var feed = _client.GetContainer(dbname, containerName)
+                .GetItemQueryIterator<User>(
+                    queryText: "SELECT * FROM products"
+                );
+            
+            // Iterate query result pages
+            while (feed.HasMoreResults)
+            {
+                var response = await feed.ReadNextAsync();
+
+                // Iterate query results
+                users.AddRange(response);
+            }
+            
+            return users;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+    
     public async Task<User> GetUserById(string id, string userId)
     {
         try
